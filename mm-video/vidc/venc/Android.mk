@@ -48,7 +48,7 @@ include $(CLEAR_VARS)
 ifeq ($(TARGET_QCOM_DISPLAY_VARIANT),caf)
 DISPLAY := display-caf
 else
-DISPLAY := display
+DISPLAY := display/$(TARGET_BOARD_PLATFORM)
 endif
 
 libmm-venc-inc      := bionic/libc/include

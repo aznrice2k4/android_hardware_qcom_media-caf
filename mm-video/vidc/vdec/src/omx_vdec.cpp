@@ -4542,12 +4542,6 @@ OMX_ERRORTYPE  omx_vdec::use_output_buffer(
         drv_ctx.ptr_outputbuffer[i].bufferaddr = buff;
         drv_ctx.ptr_outputbuffer[i].mmaped_size =
             drv_ctx.ptr_outputbuffer[i].buffer_len = drv_ctx.op_buf.buffer_size;
-#if defined(_ANDROID_ICS_)
-        if (drv_ctx.interlace != VDEC_InterlaceFrameProgressive) {
-            int enable = 1;
-            setMetaData(handle, PP_PARAM_INTERLACED, (void*)&enable);
-        }
-#endif
     } else
 #endif
 
@@ -7186,11 +7180,6 @@ OMX_ERRORTYPE omx_vdec::fill_buffer_done(OMX_HANDLETYPE hComp,
     dim.sliceWidth = m_port_def.format.video.nStride;
     dim.sliceHeight = m_port_def.format.video.nSliceHeight;
     handle = (private_handle_t *)native_buffer[buf_index].nativehandle;
-    if (handle) {
-        DEBUG_PRINT_LOW("NOTE: set metadata: update buffer geo with "
-                "stride %d slice %d", dim.sliceWidth, dim.sliceHeight);
-        setMetaData(handle, UPDATE_BUFFER_GEOMETRY, (void*)&dim);
-    }
   }
 
   return OMX_ErrorNone;
@@ -9444,25 +9433,12 @@ void omx_vdec::append_interlace_extradata(OMX_OTHER_EXTRADATATYPE *extra,
     interlace_format->bInterlaceFormat = OMX_FALSE;
     interlace_format->nInterlaceFormats = OMX_InterlaceFrameProgressive;
     drv_ctx.interlace = VDEC_InterlaceFrameProgressive;
-#if defined(_ANDROID_ICS_)
-    if(handle)
-    {
-      setMetaData(handle, PP_PARAM_INTERLACED, (void*)&enable);
-    }
-#endif
   }
   else
   {
     interlace_format->bInterlaceFormat = OMX_TRUE;
     interlace_format->nInterlaceFormats = OMX_InterlaceInterleaveFrameTopFieldFirst;
     drv_ctx.interlace = VDEC_InterlaceInterleaveFrameTopFieldFirst;
-#if defined(_ANDROID_ICS_)
-    enable = 1;
-    if(handle)
-    {
-      setMetaData(handle, PP_PARAM_INTERLACED, (void*)&enable);
-    }
-#endif
   }
   print_debug_extradata(extra);
 }
